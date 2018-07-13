@@ -1,5 +1,6 @@
 (ns hb-test-task.core
   (:require [reagent.core :as r]
+            [hb-test-task.utils :refer [get-country-code-by-id]]
             [components.app :refer [app]]
             [components.phone-input :refer [phone-input]]))
 
@@ -8,26 +9,6 @@
 (println "This text is printed from src/hb-test-task/core.cljs. Go ahead and edit it and see reloading in action.")
 
 ;; define your app data so that it doesn't get over-written on reload
-
-(defonce app-state (r/atom {:selected-country "0"
-                            :input-value      ""}))
-
-(def selected-country (r/cursor app-state [:selected-country]))
-(def input-value (r/cursor app-state [:input-value]))
-
-(defn on-js-reload []
-  ;; optionally touch your app-state to force rerendering depending on
-  ;; your application
-  ;; (swap! app-state update-in [:__figwheel_counter] inc)
-  )
-
-(defn on-select-change [e]
-  (let [new-country-id (-> e .-target .-value)]
-    (reset! selected-country new-country-id)))
-
-(defn on-input-change [e]
-  (let [new-phone-number (-> e .-target .-value)]
-    (reset! input-value new-phone-number)))
 
 (def country-db [{:id           "0"
                   :label        "??"
@@ -49,6 +30,28 @@
                   :flag         "🇷🇺"
                   :country-code "+7"
                   :phone-format "+7 (###) ### ####"}])
+
+
+(defonce app-state (r/atom {:selected-country "0"
+                            :input-value      ""}))
+
+(def selected-country (r/cursor app-state [:selected-country]))
+(def input-value (r/cursor app-state [:input-value]))
+
+(defn on-js-reload []
+  ;; optionally touch your app-state to force rerendering depending on
+  ;; your application
+  ;; (swap! app-state update-in [:__figwheel_counter] inc)
+  )
+
+(defn on-select-change [e]
+  (let [new-country-id (-> e .-target .-value)]
+    (reset! selected-country new-country-id)
+    (reset! input-value (get-country-code-by-id country-db new-country-id))))
+
+(defn on-input-change [e]
+  (let [new-phone-number (-> e .-target .-value)]
+    (reset! input-value new-phone-number)))
 
 (r/render [app
            [phone-input {:options          country-db
