@@ -33,6 +33,7 @@
 (r/render [app
            [phone-input {:options          country-db
                          :input-value      ""
+                         :hint             "hint text"
                          :on-input-change  #()
                          :on-select-change #()
                          :select-value     @selected-country}]]
