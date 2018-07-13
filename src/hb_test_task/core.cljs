@@ -44,13 +44,13 @@
   ;; (swap! app-state update-in [:__figwheel_counter] inc)
   )
 
-(defn on-select-change [e]
+(defn on-select-change [country-db e]
   (let [new-country-id (-> e .-target .-value)
         country-code (get-country-code-by-id country-db new-country-id)]
     (reset! selected-country new-country-id)
     (reset! input-value country-code)))
 
-(defn on-input-change [e]
+(defn on-input-change [country-db e]
   (let [new-phone-number (-> e .-target .-value)
         country-id (get-country-id-by-phone country-db new-phone-number)]
     (reset! input-value new-phone-number)
@@ -60,7 +60,7 @@
            [phone-input {:options          country-db
                          :input-value      input-value
                          :hint             "hint text"
-                         :on-input-change  on-input-change
-                         :on-select-change on-select-change
+                         :on-input-change  (partial on-input-change country-db)
+                         :on-select-change (partial on-select-change country-db)
                          :select-value     selected-country}]]
           (.getElementById js/document "app"))
