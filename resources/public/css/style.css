@@ -1,2 +1,9 @@
 /* some style */
 
+.app {
+  padding: 32px;
+}
+
+.phone-input {
+  display: flex;
+}
