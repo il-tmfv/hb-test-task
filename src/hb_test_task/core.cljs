@@ -1,6 +1,6 @@
 (ns hb-test-task.core
   (:require [reagent.core :as r]
-            [hb-test-task.utils :refer [get-country-code-by-id]]
+            [hb-test-task.utils :refer [get-country-code-by-id get-country-id-by-phone]]
             [components.app :refer [app]]
             [components.phone-input :refer [phone-input]]))
 
@@ -13,8 +13,8 @@
 (def country-db [{:id           "0"
                   :label        "??"
                   :flag         "🏴"
-                  :country-code "+44"
-                  :phone-format "+44 (##) #### ####"}
+                  :country-code "?"
+                  :phone-format "?"}
                  {:id           "1"
                   :label        "UK"
                   :flag         "🇬🇧"
@@ -45,13 +45,16 @@
   )
 
 (defn on-select-change [e]
-  (let [new-country-id (-> e .-target .-value)]
+  (let [new-country-id (-> e .-target .-value)
+        country-code (get-country-code-by-id country-db new-country-id)]
     (reset! selected-country new-country-id)
-    (reset! input-value (get-country-code-by-id country-db new-country-id))))
+    (reset! input-value country-code)))
 
 (defn on-input-change [e]
-  (let [new-phone-number (-> e .-target .-value)]
-    (reset! input-value new-phone-number)))
+  (let [new-phone-number (-> e .-target .-value)
+        country-id (get-country-id-by-phone country-db new-phone-number)]
+    (reset! input-value new-phone-number)
+    (reset! selected-country country-id)))
 
 (r/render [app
            [phone-input {:options          country-db
