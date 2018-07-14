@@ -7,6 +7,7 @@
                                         get-country-code-by-id
                                         get-country-id-by-phone
                                         check-enough-digits
+                                        strip-phone-number
                                         format-phone-number]]))
 
 (def country-db [{:id           "0"
@@ -48,12 +49,16 @@
                                  country-code (get-country-code-by-id country-db new-country-id)]
                              (reset! selected-country new-country-id)
                              (reset! input-value country-code)))
-        on-input-change (fn [e]
-                          (let [new-phone-number (-> e .-target .-value strip-forbidden-chars)
+        on-input-change (fn [format? e]
+                          (let [new-phone-number (->
+                                                   (if (string? e)
+                                                     e
+                                                     (-> e .-target .-value))
+                                                   strip-forbidden-chars)
                                 country-id (get-country-id-by-phone country-db new-phone-number)
                                 phone-format (get-phone-format-by-id country-db country-id)
                                 checked-phone-number (check-enough-digits new-phone-number @input-value phone-format)]
-                            (reset! input-value checked-phone-number)
+                            (reset! input-value (if format? (format-phone-number phone-format checked-phone-number) checked-phone-number))
                             (reset! selected-country country-id)))
         on-input-blur (fn [e]
                         (let [new-phone-number (-> e .-target .-value)
@@ -61,12 +66,14 @@
                               formatted-phone-number (format-phone-number phone-format new-phone-number)
                               has-error? (phone-number-valid? phone-format formatted-phone-number)]
                           (reset! error? (not has-error?))
-                          (reset! input-value formatted-phone-number)))
+                          (reset! input-value formatted-phone-number)
+                          (on-change (strip-phone-number formatted-phone-number))))
         ]
     (add-watch selected-country :selected-country-watcher
                (fn [_ _ _ new-country-id]
                  (reset! hint (generate-hint (get-phone-format-by-id country-db new-country-id)))))
-    (on-select-change "3")
+    (on-input-change true @value)
+    (println @value)
     (fn [] [:div
             [:div.phone-input__title title]
             [:div.phone-input
@@ -87,5 +94,5 @@
               {:class     ["phone-input__input" (when @error? "phone-input__input-error")]
                :value     @input-value
                :on-blur   on-input-blur
-               :on-change on-input-change}]]
+               :on-change (partial on-input-change false)}]]
             [:div.phone-input__hint @hint]])))

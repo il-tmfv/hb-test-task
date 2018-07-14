@@ -1,6 +1,5 @@
 (ns hb-test-task.core
   (:require [reagent.core :as r]
-            [components.app :refer [app]]
             [components.phone-input :refer [phone-input]]))
 
 (enable-console-print!)
@@ -9,7 +8,7 @@
 
 ;; define your app data so that it doesn't get over-written on reload
 
-(defonce app-state (r/atom {:phone-number-1 "" :phone-number-2 ""}))
+(defonce app-state (r/atom {:phone-number-1 "+79991112233" :phone-number-2 "+44"}))
 (defonce phone-number-1 (r/cursor app-state [:phone-number-1]))
 (defonce phone-number-2 (r/cursor app-state [:phone-number-2]))
 
@@ -19,12 +18,13 @@
   ;; (swap! app-state update-in [:__figwheel_counter] inc)
   )
 
-(r/render [app
-           [:div.inputs-group
-            [phone-input {:title "Phone number"
-                          :value     phone-number-1
-                          :on-change #(reset! phone-number-1 (-> % .-target .-value))}]
-            [phone-input {:title "Phone number"
-                          :value     phone-number-2
-                          :on-change #(reset! phone-number-2 (-> % .-target .-value))}]]]
+(r/render
+  [:div.app
+   [:div.inputs-group
+    [phone-input {:title     "Phone number"
+                  :value     phone-number-1
+                  :on-change #(reset! phone-number-1 %)}]
+    [phone-input {:title     "Phone number"
+                  :value     phone-number-2
+                  :on-change #(reset! phone-number-2 %)}]]]
           (.getElementById js/document "app"))
