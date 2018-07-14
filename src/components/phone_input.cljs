@@ -73,7 +73,6 @@
                (fn [_ _ _ new-country-id]
                  (reset! hint (generate-hint (get-phone-format-by-id country-db new-country-id)))))
     (on-input-change true @value)
-    (println @value)
     (fn [] [:div
             [:div.phone-input__title title]
             [:div.phone-input
