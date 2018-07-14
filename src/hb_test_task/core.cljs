@@ -58,7 +58,9 @@
              (reset! hint (generate-hint (get-phone-format-by-id country-db new-country-id)))))
 
 (defn on-select-change [country-db e]
-  (let [new-country-id (-> e .-target .-value)
+  (let [new-country-id (if (string? e)
+                         e
+                         (-> e .-target .-value))
         country-code (get-country-code-by-id country-db new-country-id)]
     (reset! selected-country new-country-id)
     (reset! input-value country-code)))
@@ -76,6 +78,8 @@
         has-error? (phone-number-valid? phone-format formatted-phone-number)]
     (reset! error? (not has-error?))
     (reset! input-value formatted-phone-number)))
+
+(on-select-change country-db "3")
 
 (r/render [app
            [phone-input {:options          country-db
