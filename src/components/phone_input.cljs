@@ -55,9 +55,9 @@
                                 checked-phone-number (check-enough-digits new-phone-number @input-value phone-format)]
                             (reset! input-value checked-phone-number)
                             (reset! selected-country country-id)))
-        on-input-blur (fn [select-value e]
+        on-input-blur (fn [e]
                         (let [new-phone-number (-> e .-target .-value)
-                              phone-format (get-phone-format-by-id country-db select-value)
+                              phone-format (get-phone-format-by-id country-db @selected-country)
                               formatted-phone-number (format-phone-number phone-format new-phone-number)
                               has-error? (phone-number-valid? phone-format formatted-phone-number)]
                           (reset! error? (not has-error?))
@@ -86,6 +86,6 @@
              [:input
               {:class     ["phone-input__input" (when @error? "phone-input__input-error")]
                :value     @input-value
-               :on-blur   (partial on-input-blur @selected-country)
+               :on-blur   on-input-blur
                :on-change on-input-change}]]
             [:div.phone-input__hint @hint]])))
