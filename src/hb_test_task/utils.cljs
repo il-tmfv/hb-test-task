@@ -13,8 +13,13 @@
   (let [country (some #(when (.startsWith phone (:country-code %)) %) country-db)]
     (if (nil? country) "0" (:id country))))
 
+(defn strip-forbidden-chars
+  "Removes forbidden chars from the phone number"
+  [phone-number]
+  (s/replace phone-number #"[^0-9\+\(\)\s]" ""))
+
 (defn strip-phone-number
-  "Removes all non-digit chars from a phone number. Also leaves `+` sign"
+  "Removes all non-digit chars from the phone number. Also leaves `+` sign"
   [phone-number]
   (s/replace phone-number #"[^0-9\+]+" ""))
 
@@ -25,7 +30,7 @@
     (s/replace phone-format "#" (fn [] (swap! index inc) (str "$" @index)))))
 
 (defn generate-regex-by-phone-format
-  "Generates a regex by a phone format"
+  "Generates a regex by the phone format"
   [phone-format]
   (-> phone-format
       (s/replace #"." #(get
@@ -37,7 +42,7 @@
       re-pattern))
 
 (defn generate-stripped-regex-by-phone-format
-  "Generates a stripped (removes all extra chars like parenthesis) regex by a phone format"
+  "Generates a stripped (removes all extra chars like parenthesis) regex by the phone format"
   [phone-format]
   (-> phone-format
       (s/replace #"." #(get
@@ -49,7 +54,7 @@
       re-pattern))
 
 (defn format-phone-number
-  "Formats phone number according to a format"
+  "Formats the phone number according to the format"
   [format phone-number]
   (let [replace-pattern (generate-replace-pattern-by-phone-format format)
         stripped-phone-number (strip-phone-number phone-number)
@@ -61,7 +66,7 @@
     (-> (re-matches regex phone-number) nil? not)))
 
 (defn generate-hint
-  "Generates hint about phone number format"
+  "Generates hint about the phone number format"
   [format]
   (let [formatted-example (s/replace format "#" "1")
         not-formatted-example (strip-phone-number formatted-example)]

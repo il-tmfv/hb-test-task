@@ -1,6 +1,7 @@
 (ns hb-test-task.core
   (:require [reagent.core :as r]
-            [hb-test-task.utils :refer [generate-hint
+            [hb-test-task.utils :refer [strip-forbidden-chars
+                                        generate-hint
                                         phone-number-valid?
                                         get-phone-format-by-id
                                         get-country-code-by-id
@@ -66,7 +67,7 @@
     (reset! input-value country-code)))
 
 (defn on-input-change [country-db e]
-  (let [new-phone-number (-> e .-target .-value)
+  (let [new-phone-number (-> e .-target .-value strip-forbidden-chars)
         country-id (get-country-id-by-phone country-db new-phone-number)]
     (reset! input-value new-phone-number)
     (reset! selected-country country-id)))
