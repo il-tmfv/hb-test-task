@@ -20,9 +20,11 @@
   )
 
 (r/render [app
-           [:div
-            [phone-input {:value     phone-number-1
+           [:div.inputs-group
+            [phone-input {:title "Phone number"
+                          :value     phone-number-1
                           :on-change #(reset! phone-number-1 (-> % .-target .-value))}]
-            [phone-input {:value     phone-number-2
+            [phone-input {:title "Phone number"
+                          :value     phone-number-2
                           :on-change #(reset! phone-number-2 (-> % .-target .-value))}]]]
           (.getElementById js/document "app"))

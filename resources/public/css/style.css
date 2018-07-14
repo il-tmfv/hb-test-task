@@ -7,8 +7,21 @@ html {
   padding: 32px;
 }
 
+.inputs-group > * {
+  margin-bottom: 24px;
+}
+
+.inputs-group:last-child {
+  margin-bottom: 0;
+}
+
 .phone-input {
   display: flex;
+}
+
+.phone-input__title {
+  color: #999;
+  margin-bottom: 4px;
 }
 
 .phone-input__select {

@@ -30,7 +30,8 @@
                   :country-code "+7"
                   :phone-format "+7 (###) ### ## ##"}])
 
-(defn phone-input [{:keys [value
+(defn phone-input [{:keys [title
+                           value
                            on-change]}]
   (let [state (r/atom {:error?           false
                        :hint             ""
@@ -67,8 +68,9 @@
                  (reset! hint (generate-hint (get-phone-format-by-id country-db new-country-id)))))
     (on-select-change "3")
     (fn [] [:div
+            [:div.phone-input__title title]
             [:div.phone-input
-             [:div..phone-input__select
+             [:div.phone-input__select
               [:select
                {:value     @selected-country
                 :on-change on-select-change}
