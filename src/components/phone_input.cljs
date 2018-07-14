@@ -17,9 +17,10 @@
       (map (fn [option]
              (let [id (:id option)
                    flag (:flag option)
-                   label (:label option)]
+                   label (:label option)
+                   disabled (= id "0")]
                (vector
-                 :option {:key id :value id}
+                 :option {:key id :value id :disabled disabled}
                  (str flag " " label))))
            options)]]
     [:input
