@@ -23,4 +23,4 @@
       :value     @input-value
       :on-blur   (partial on-input-blur @select-value)
       :on-change on-input-change}]]
-   [:div.phone-input__hint hint]])
+   [:div.phone-input__hint @hint]])

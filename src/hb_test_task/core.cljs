@@ -1,6 +1,11 @@
 (ns hb-test-task.core
   (:require [reagent.core :as r]
-            [hb-test-task.utils :refer [phone-number-valid? get-phone-format-by-id get-country-code-by-id get-country-id-by-phone format-phone-number]]
+            [hb-test-task.utils :refer [generate-hint
+                                        phone-number-valid?
+                                        get-phone-format-by-id
+                                        get-country-code-by-id
+                                        get-country-id-by-phone
+                                        format-phone-number]]
             [components.app :refer [app]]
             [components.phone-input :refer [phone-input]]))
 
@@ -33,18 +38,24 @@
 
 
 (defonce app-state (r/atom {:error?           false
+                            :hint ""
                             :selected-country "0"
                             :input-value      ""}))
 
 (def selected-country (r/cursor app-state [:selected-country]))
 (def input-value (r/cursor app-state [:input-value]))
 (def error? (r/cursor app-state [:error?]))
+(def hint (r/cursor app-state [:hint]))
 
 (defn on-js-reload []
   ;; optionally touch your app-state to force rerendering depending on
   ;; your application
   ;; (swap! app-state update-in [:__figwheel_counter] inc)
   )
+
+(add-watch selected-country :selected-country-watcher
+           (fn [_ _ _ new-country-id]
+             (reset! hint (generate-hint (get-phone-format-by-id country-db new-country-id)))))
 
 (defn on-select-change [country-db e]
   (let [new-country-id (-> e .-target .-value)
@@ -69,7 +80,7 @@
 (r/render [app
            [phone-input {:options          country-db
                          :input-value      input-value
-                         :hint             "hint text"
+                         :hint             hint
                          :error?           error?
                          :on-input-blur    (partial on-input-blur country-db)
                          :on-input-change  (partial on-input-change country-db)

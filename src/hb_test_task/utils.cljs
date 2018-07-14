@@ -59,3 +59,11 @@
 (defn phone-number-valid? [format phone-number]
   (let [regex (generate-regex-by-phone-format format)]
     (-> (re-matches regex phone-number) nil? not)))
+
+(defn generate-hint
+  "Generates hint about phone number format"
+  [format]
+  (let [formatted-example (s/replace format "#" "1")
+        not-formatted-example (strip-phone-number formatted-example)]
+    (when (not (empty? formatted-example))
+      (str "e.g. " not-formatted-example " or " formatted-example))))
