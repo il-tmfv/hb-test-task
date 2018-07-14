@@ -6,6 +6,7 @@
                                         get-phone-format-by-id
                                         get-country-code-by-id
                                         get-country-id-by-phone
+                                        check-enough-digits
                                         format-phone-number]]
             [components.app :refer [app]]
             [components.phone-input :refer [phone-input]]))
@@ -68,8 +69,10 @@
 
 (defn on-input-change [country-db e]
   (let [new-phone-number (-> e .-target .-value strip-forbidden-chars)
-        country-id (get-country-id-by-phone country-db new-phone-number)]
-    (reset! input-value new-phone-number)
+        country-id (get-country-id-by-phone country-db new-phone-number)
+        phone-format (get-phone-format-by-id country-db country-id)
+        checked-phone-number (check-enough-digits new-phone-number @input-value phone-format)]
+    (reset! input-value checked-phone-number)
     (reset! selected-country country-id)))
 
 (defn on-input-blur [country-db select-value e]

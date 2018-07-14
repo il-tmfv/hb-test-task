@@ -72,3 +72,17 @@
         not-formatted-example (strip-phone-number formatted-example)]
     (when (not (empty? formatted-example))
       (str "e.g. " not-formatted-example " or " formatted-example))))
+
+(defn count-char-in-str [regex str]
+  (->> str seq (filter #(re-matches regex %)) count))
+
+(defn check-enough-digits
+  "Returns `user-input` if user still can enter new digit, otherwise returns `current-phone-number`"
+  [user-input current-phone-number format]
+  (let [user-input-number-digits (count-char-in-str #"\d" user-input)
+        format-digits (count-char-in-str #"\d|#" format)]
+    (if (= format-digits 0)
+      user-input
+      (if (> user-input-number-digits format-digits)
+        current-phone-number
+        user-input))))
