@@ -14,9 +14,13 @@
      [:select
       {:value     @select-value
        :on-change on-select-change}
-      (map #(vector
-              :option {:key (:id %) :value (:id %)}
-              (str (:flag %) " " (:label %)))
+      (map (fn [option]
+             (let [id (:id option)
+                   flag (:flag option)
+                   label (:label option)]
+               (vector
+                 :option {:key id :value id}
+                 (str flag " " label))))
            options)]]
     [:input
      {:class     ["phone-input__input" (when @error? "phone-input__input-error")]
