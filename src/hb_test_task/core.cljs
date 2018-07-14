@@ -1,6 +1,6 @@
 (ns hb-test-task.core
   (:require [reagent.core :as r]
-            [hb-test-task.utils :refer [get-phone-format-by-id get-country-code-by-id get-country-id-by-phone format-phone-number]]
+            [hb-test-task.utils :refer [phone-number-valid? get-phone-format-by-id get-country-code-by-id get-country-id-by-phone format-phone-number]]
             [components.app :refer [app]]
             [components.phone-input :refer [phone-input]]))
 
@@ -14,7 +14,7 @@
                   :label        "?"
                   :flag         "🏴"
                   :country-code "?"
-                  :phone-format "?"}
+                  :phone-format ""}
                  {:id           "1"
                   :label        "UK"
                   :flag         "🇬🇧"
@@ -32,11 +32,13 @@
                   :phone-format "+7 (###) ### ## ##"}])
 
 
-(defonce app-state (r/atom {:selected-country "0"
+(defonce app-state (r/atom {:error?           false
+                            :selected-country "0"
                             :input-value      ""}))
 
 (def selected-country (r/cursor app-state [:selected-country]))
 (def input-value (r/cursor app-state [:input-value]))
+(def error? (r/cursor app-state [:error?]))
 
 (defn on-js-reload []
   ;; optionally touch your app-state to force rerendering depending on
@@ -59,13 +61,16 @@
 (defn on-input-blur [country-db select-value e]
   (let [new-phone-number (-> e .-target .-value)
         phone-format (get-phone-format-by-id country-db select-value)
-        formatted-phone-number (format-phone-number phone-format new-phone-number)]
-   (reset! input-value formatted-phone-number)))
+        formatted-phone-number (format-phone-number phone-format new-phone-number)
+        has-error? (phone-number-valid? phone-format formatted-phone-number)]
+    (reset! error? (not has-error?))
+    (reset! input-value formatted-phone-number)))
 
 (r/render [app
            [phone-input {:options          country-db
                          :input-value      input-value
                          :hint             "hint text"
+                         :error?           error?
                          :on-input-blur    (partial on-input-blur country-db)
                          :on-input-change  (partial on-input-change country-db)
                          :on-select-change (partial on-select-change country-db)

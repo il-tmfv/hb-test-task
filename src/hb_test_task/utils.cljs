@@ -30,10 +30,10 @@
   (-> phone-format
       (s/replace #"." #(get
                          {"+" "\\+"
-                         "(" "\\("
-                         ")" "\\)"
-                         " " " "
-                         "#" "\\d"} % %))
+                          "(" "\\("
+                          ")" "\\)"
+                          " " " "
+                          "#" "\\d"} % %))
       re-pattern))
 
 (defn generate-stripped-regex-by-phone-format
@@ -42,10 +42,10 @@
   (-> phone-format
       (s/replace #"." #(get
                          {"+" "\\+"
-                         "(" ""
-                         ")" ""
-                         " " ""
-                         "#" "(\\d)"} % %))
+                          "(" ""
+                          ")" ""
+                          " " ""
+                          "#" "(\\d)"} % %))
       re-pattern))
 
 (defn format-phone-number
@@ -55,3 +55,7 @@
         stripped-phone-number (strip-phone-number phone-number)
         regex (generate-stripped-regex-by-phone-format format)]
     (s/replace stripped-phone-number regex replace-pattern)))
+
+(defn phone-number-valid? [format phone-number]
+  (let [regex (generate-regex-by-phone-format format)]
+    (-> (re-matches regex phone-number) nil? not)))

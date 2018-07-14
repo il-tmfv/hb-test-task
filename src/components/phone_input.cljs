@@ -1,6 +1,7 @@
 (ns components.phone-input)
 
 (defn phone-input [{:keys [hint
+                           error?
                            input-value
                            select-value
                            options
@@ -17,8 +18,9 @@
               :option {:key (:id %) :value (:id %)}
               (str (:flag %) " " (:label %)))
            options)]]
-    [:input.phone-input__input
-     {:value     @input-value
+    [:input
+     {:class     ["phone-input__input" (when @error? "phone-input__input-error")]
+      :value     @input-value
       :on-blur   (partial on-input-blur @select-value)
       :on-change on-input-change}]]
    [:div.phone-input__hint hint]])
