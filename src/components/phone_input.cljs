@@ -34,14 +34,10 @@
 (defn phone-input [{:keys [title
                            value
                            on-change]}]
-  (let [state (r/atom {:error?           false
-                       :hint             ""
-                       :selected-country "0"
-                       :input-value      ""})
-        selected-country (r/cursor state [:selected-country])
-        input-value (r/cursor state [:input-value])
-        error? (r/cursor state [:error?])
-        hint (r/cursor state [:hint])
+  (let [selected-country (r/atom "0")
+        input-value (r/atom "")
+        error? (r/atom false)
+        hint (r/atom "")
         on-select-change (fn [e]
                            (let [new-country-id (if (string? e)
                                                   e
