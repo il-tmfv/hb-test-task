@@ -73,7 +73,9 @@
     (when (not (empty? formatted-example))
       (str "e.g. " not-formatted-example " or " formatted-example))))
 
-(defn count-char-in-str [regex str]
+(defn count-char-in-str
+  "Counts how many chars in string matches provided regex"
+  [regex str]
   (->> str seq (filter #(re-matches regex %)) count))
 
 (defn check-enough-digits
