@@ -7,6 +7,10 @@ html {
   padding: 32px;
 }
 
+.state-panel {
+  margin-bottom: 32px;
+}
+
 .inputs-group > * {
   margin-bottom: 24px;
 }

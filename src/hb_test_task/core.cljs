@@ -1,5 +1,6 @@
 (ns hb-test-task.core
   (:require [reagent.core :as r]
+            [components.state-panel :refer [state-panel]]
             [components.phone-input :refer [phone-input]]))
 
 (enable-console-print!)
@@ -20,6 +21,7 @@
 
 (r/render
   [:div.app
+   [state-panel phone-number-1 phone-number-2]
    [:div.inputs-group
     [phone-input {:title     "Phone number"
                   :value     phone-number-1
