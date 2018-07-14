@@ -4,6 +4,7 @@
                            input-value
                            select-value
                            options
+                           on-input-blur
                            on-select-change
                            on-input-change]}]
   [:div
@@ -18,5 +19,6 @@
            options)]]
     [:input.phone-input__input
      {:value     @input-value
+      :on-blur   (partial on-input-blur @select-value)
       :on-change on-input-change}]]
    [:div.phone-input__hint hint]])

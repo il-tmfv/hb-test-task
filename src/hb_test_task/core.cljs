@@ -1,6 +1,6 @@
 (ns hb-test-task.core
   (:require [reagent.core :as r]
-            [hb-test-task.utils :refer [get-country-code-by-id get-country-id-by-phone]]
+            [hb-test-task.utils :refer [get-phone-format-by-id get-country-code-by-id get-country-id-by-phone format-phone-number]]
             [components.app :refer [app]]
             [components.phone-input :refer [phone-input]]))
 
@@ -11,7 +11,7 @@
 ;; define your app data so that it doesn't get over-written on reload
 
 (def country-db [{:id           "0"
-                  :label        "??"
+                  :label        "?"
                   :flag         "🏴"
                   :country-code "?"
                   :phone-format "?"}
@@ -29,7 +29,7 @@
                   :label        "RU"
                   :flag         "🇷🇺"
                   :country-code "+7"
-                  :phone-format "+7 (###) ### ####"}])
+                  :phone-format "+7 (###) ### ## ##"}])
 
 
 (defonce app-state (r/atom {:selected-country "0"
@@ -56,10 +56,17 @@
     (reset! input-value new-phone-number)
     (reset! selected-country country-id)))
 
+(defn on-input-blur [country-db select-value e]
+  (let [new-phone-number (-> e .-target .-value)
+        phone-format (get-phone-format-by-id country-db select-value)
+        formatted-phone-number (format-phone-number phone-format new-phone-number)]
+   (reset! input-value formatted-phone-number)))
+
 (r/render [app
            [phone-input {:options          country-db
                          :input-value      input-value
                          :hint             "hint text"
+                         :on-input-blur    (partial on-input-blur country-db)
                          :on-input-change  (partial on-input-change country-db)
                          :on-select-change (partial on-select-change country-db)
                          :select-value     selected-country}]]
