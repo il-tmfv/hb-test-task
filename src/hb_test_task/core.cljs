@@ -1,13 +1,5 @@
 (ns hb-test-task.core
   (:require [reagent.core :as r]
-            [hb-test-task.utils :refer [strip-forbidden-chars
-                                        generate-hint
-                                        phone-number-valid?
-                                        get-phone-format-by-id
-                                        get-country-code-by-id
-                                        get-country-id-by-phone
-                                        check-enough-digits
-                                        format-phone-number]]
             [components.app :refer [app]]
             [components.phone-input :refer [phone-input]]))
 
@@ -17,37 +9,9 @@
 
 ;; define your app data so that it doesn't get over-written on reload
 
-(def country-db [{:id           "0"
-                  :label        "?"
-                  :flag         "🏴"
-                  :country-code "?"
-                  :phone-format ""}
-                 {:id           "1"
-                  :label        "UK"
-                  :flag         "🇬🇧"
-                  :country-code "+44"
-                  :phone-format "+44 (##) #### ####"}
-                 {:id           "2"
-                  :label        "US"
-                  :flag         "🇺🇸"
-                  :country-code "+1"
-                  :phone-format "+1 (###) ### ####"}
-                 {:id           "3"
-                  :label        "RU"
-                  :flag         "🇷🇺"
-                  :country-code "+7"
-                  :phone-format "+7 (###) ### ## ##"}])
-
-
-(defonce app-state (r/atom {:error?           false
-                            :hint ""
-                            :selected-country "0"
-                            :input-value      ""}))
-
-(def selected-country (r/cursor app-state [:selected-country]))
-(def input-value (r/cursor app-state [:input-value]))
-(def error? (r/cursor app-state [:error?]))
-(def hint (r/cursor app-state [:hint]))
+(defonce app-state (r/atom {:phone-number-1 "" :phone-number-2 ""}))
+(defonce phone-number-1 (r/cursor app-state [:phone-number-1]))
+(defonce phone-number-2 (r/cursor app-state [:phone-number-2]))
 
 (defn on-js-reload []
   ;; optionally touch your app-state to force rerendering depending on
@@ -55,43 +19,10 @@
   ;; (swap! app-state update-in [:__figwheel_counter] inc)
   )
 
-(add-watch selected-country :selected-country-watcher
-           (fn [_ _ _ new-country-id]
-             (reset! hint (generate-hint (get-phone-format-by-id country-db new-country-id)))))
-
-(defn on-select-change [country-db e]
-  (let [new-country-id (if (string? e)
-                         e
-                         (-> e .-target .-value))
-        country-code (get-country-code-by-id country-db new-country-id)]
-    (reset! selected-country new-country-id)
-    (reset! input-value country-code)))
-
-(defn on-input-change [country-db e]
-  (let [new-phone-number (-> e .-target .-value strip-forbidden-chars)
-        country-id (get-country-id-by-phone country-db new-phone-number)
-        phone-format (get-phone-format-by-id country-db country-id)
-        checked-phone-number (check-enough-digits new-phone-number @input-value phone-format)]
-    (reset! input-value checked-phone-number)
-    (reset! selected-country country-id)))
-
-(defn on-input-blur [country-db select-value e]
-  (let [new-phone-number (-> e .-target .-value)
-        phone-format (get-phone-format-by-id country-db select-value)
-        formatted-phone-number (format-phone-number phone-format new-phone-number)
-        has-error? (phone-number-valid? phone-format formatted-phone-number)]
-    (reset! error? (not has-error?))
-    (reset! input-value formatted-phone-number)))
-
-(on-select-change country-db "3")
-
 (r/render [app
-           [phone-input {:options          country-db
-                         :input-value      input-value
-                         :hint             hint
-                         :error?           error?
-                         :on-input-blur    (partial on-input-blur country-db)
-                         :on-input-change  (partial on-input-change country-db)
-                         :on-select-change (partial on-select-change country-db)
-                         :select-value     selected-country}]]
+           [:div
+            [phone-input {:value     phone-number-1
+                          :on-change #(reset! phone-number-1 (-> % .-target .-value))}]
+            [phone-input {:value     phone-number-2
+                          :on-change #(reset! phone-number-2 (-> % .-target .-value))}]]]
           (.getElementById js/document "app"))
