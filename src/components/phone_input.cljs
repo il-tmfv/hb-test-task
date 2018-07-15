@@ -7,6 +7,7 @@
                                         get-country-code-by-id
                                         get-country-id-by-phone
                                         check-enough-digits
+                                        leave-plus-at-least
                                         strip-phone-number
                                         format-phone-number]]))
 
@@ -50,7 +51,8 @@
                                                    (if (string? e)
                                                      e
                                                      (-> e .-target .-value))
-                                                   strip-forbidden-chars)
+                                                   strip-forbidden-chars
+                                                   leave-plus-at-least)
                                 country-id (get-country-id-by-phone country-db new-phone-number)
                                 phone-format (get-phone-format-by-id country-db country-id)
                                 checked-phone-number (check-enough-digits new-phone-number @input-value phone-format)]

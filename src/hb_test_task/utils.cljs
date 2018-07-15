@@ -20,6 +20,11 @@
       (s/replace #"[^0-9\+\(\)\s]" "")
       (s/replace #"(?<=.)\+(?=\d?)" "")))
 
+(defn leave-plus-at-least
+  "Leaves `+` character if `phone-number` is empty"
+  [phone-number]
+  (if (empty? phone-number) "+" phone-number))
+
 (defn strip-phone-number
   "Removes all non-digit chars from the phone number. Also leaves `+` sign"
   [phone-number]
