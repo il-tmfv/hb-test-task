@@ -16,7 +16,9 @@
 (defn strip-forbidden-chars
   "Removes forbidden chars from the phone number"
   [phone-number]
-  (s/replace phone-number #"[^0-9\+\(\)\s]" ""))
+  (-> phone-number
+      (s/replace #"[^0-9\+\(\)\s]" "")
+      (s/replace #"(?<=.)\+(?=\d?)" "") ))
 
 (defn strip-phone-number
   "Removes all non-digit chars from the phone number. Also leaves `+` sign"
