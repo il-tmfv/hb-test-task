@@ -18,7 +18,7 @@
   [phone-number]
   (-> phone-number
       (s/replace #"[^0-9\+\(\)\s]" "")
-      (s/replace #"(?<=.)\+(?=\d?)" "") ))
+      (s/replace #"(?<=.)\+(?=\d?)" "")))
 
 (defn strip-phone-number
   "Removes all non-digit chars from the phone number. Also leaves `+` sign"
